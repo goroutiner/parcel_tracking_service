@@ -1,18 +1,36 @@
-name: golang-pipeline
-on: push
+name: Parcel Tracking Service
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["dev"]
+
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-    container: golang:latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Run Unit Tests
-        run: GOOS=linux GOARCH=amd64 go test
-
-      - name: Vet
+      - uses: actions/setup-go@v5
+        with:
+          cache-dependency-path: |
+            **/go.mod
+      - name: Build
         run: |
-          go vet ./...
+          go build ./cmd/main.go
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+      - name: Startup
+        run: |
+          go build ./cmd/main.go
+          nohup ./main &
+      - name: Test
+        run: go test ./internal/services/...
 
   deploy:
     name: Push Docker image to Docker Hub
@@ -36,12 +54,11 @@ jobs:
         uses: docker/metadata-action@v5.5.1
         with:
           images: alexey75/parcel
-        
+
       - name: Build and push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }} 
-
+          labels: ${{ steps.meta.outputs.labels }}
