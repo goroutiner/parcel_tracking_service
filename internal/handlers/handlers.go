@@ -50,7 +50,11 @@ func GetParcels(service *services.Parcel) func(http.ResponseWriter, *http.Reques
 func UpdateStatus(service *services.Parcel) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var number int
-		fmt.Sscanf(r.PathValue("number"), "%d", &number)
+		if _, err := fmt.Sscanf(r.PathValue("number"), "%d", &number); err != nil {
+			http.Error(w, fmt.Sprintf("Ошибка при обновлении статуса: %v", err), http.StatusBadRequest)
+			log.Println(err.Error())
+			return
+		}
 
 		err := service.NextStatus(number)
 		if err != nil {
@@ -67,7 +71,11 @@ func UpdateStatus(service *services.Parcel) func(http.ResponseWriter, *http.Requ
 func UpdateAddress(service *services.Parcel) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var number int
-		fmt.Sscanf(r.PathValue("number"), "%d", &number)
+		if _, err := fmt.Sscanf(r.PathValue("number"), "%d", &number); err != nil {
+			http.Error(w, fmt.Sprintf("Ошибка при обновлении статуса: %v", err), http.StatusBadRequest)
+			log.Println(err.Error())
+			return
+		}
 
 		var input map[string]string
 		if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -90,7 +98,11 @@ func UpdateAddress(service *services.Parcel) func(http.ResponseWriter, *http.Req
 func DeleteParcel(service *services.Parcel) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var number int
-		fmt.Sscanf(r.PathValue("number"), "%d", &number)
+		if _, err := fmt.Sscanf(r.PathValue("number"), "%d", &number); err != nil {
+			http.Error(w, fmt.Sprintf("Ошибка при обновлении статуса: %v", err), http.StatusBadRequest)
+			log.Println(err.Error())
+			return
+		}
 
 		if err := service.Delete(number); err != nil {
 			http.Error(w, fmt.Sprintf("Ошибка при удалении посылки: %v", err), http.StatusBadRequest)
