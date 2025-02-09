@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	db, err := database.NewParcelStore("tracker.db")
+	db, err := database.NewParcelStore()
 	if err != nil {
 		log.Fatal(err.Error())
 	}

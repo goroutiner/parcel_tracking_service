@@ -1,12 +1,12 @@
 package services
 
 import (
-	"database/sql"
 	"log"
 	"parcel/internal/database"
 	"parcel/internal/entities"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	_ "modernc.org/sqlite"
 )
 
@@ -15,7 +15,7 @@ type Parcel struct {
 }
 
 // NewParcelService создает сервис для работы с посылками
-func NewParcelService(db *sql.DB) *Parcel {
+func NewParcelService(db *sqlx.DB) *Parcel {
 	return &Parcel{Store: database.Store{Db: db}}
 }
 
@@ -43,6 +43,7 @@ func (s *Parcel) Register(client int, address string) (entities.Parcel, error) {
 
 // NextStatus изменяет статус посылки на следующий в зависимости от предыдущего
 func (s *Parcel) NextStatus(number int) error {
+	var err error
 	parcel, err := s.Store.Get(number)
 	if err != nil {
 		return err
@@ -58,12 +59,14 @@ func (s *Parcel) NextStatus(number int) error {
 		return nil
 	}
 
-	log.Printf("У посылки № %d новый статус: %s\n", number, nextStatus)
+	if err = s.Store.SetStatus(number, nextStatus); err == nil {
+		log.Printf("У посылки № %d новый статус: %s\n", number, nextStatus)
+	}
 
-	return s.Store.SetStatus(number, nextStatus)
+	return err
 }
 
-// ChangeAddress изменяет адрес посылки 
+// ChangeAddress изменяет адрес посылки
 func (s *Parcel) ChangeAddress(number int, address string) error {
 	var err error
 	if err = s.Store.SetAddress(number, address); err == nil {
@@ -73,7 +76,7 @@ func (s *Parcel) ChangeAddress(number int, address string) error {
 	return err
 }
 
-// Delete удаляет посылку  
+// Delete удаляет посылку
 func (s *Parcel) Delete(number int) error {
 	var err error
 	if err = s.Store.Delete(number); err == nil {

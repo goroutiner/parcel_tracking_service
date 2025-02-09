@@ -27,14 +27,14 @@ func getTestParcel() entities.Parcel {
 		Client:    1000,
 		Status:    entities.ParcelStatusRegistered,
 		Address:   "test",
-		CreatedAt: time.Now().UTC().Format(time.RFC3339),
+		CreatedAt: time.Now().UTC().Format(time.DateTime),
 	}
 }
 
 // TestAddGetDelete проверяет добавление, получение и удаление посылки
 func TestAddGetDelete(t *testing.T) {
 	// prepare
-	db, err := database.NewParcelStore("tracker.db")
+	db, err := database.NewParcelStore()
 	if err != nil {
 		require.NoError(t, err)
 	}
@@ -66,7 +66,7 @@ func TestAddGetDelete(t *testing.T) {
 // TestSetAddress проверяет обновление адреса
 func TestSetAddress(t *testing.T) {
 	// prepare
-	db, err := database.NewParcelStore("tracker.db")
+	db, err := database.NewParcelStore()
 	if err != nil {
 		require.NoError(t, err)
 	}
@@ -97,7 +97,7 @@ func TestSetAddress(t *testing.T) {
 // TestSetStatus проверяет обновление статуса
 func TestSetStatus(t *testing.T) {
 	// prepare
-	db, err := database.NewParcelStore("tracker.db")
+	db, err := database.NewParcelStore()
 	if err != nil {
 		require.NoError(t, err)
 	}
@@ -127,7 +127,7 @@ func TestSetStatus(t *testing.T) {
 // TestGetByClient проверяет получение посылок по идентификатору клиента
 func TestGetByClient(t *testing.T) {
 	// prepare
-	db, err := database.NewParcelStore("tracker.db")
+	db, err := database.NewParcelStore()
 	if err != nil {
 		require.NoError(t, err)
 	}

@@ -1,13 +1,15 @@
 package entities
 
-import "database/sql"
+import (
+	"github.com/jmoiron/sqlx"
+)
 
 type Parcel struct {
-	Number    int    `json:"number,omitempty"`
-	Client    int    `json:"client,omitempty"`
-	Status    string `json:"status,omitempty"`
-	Address   string `json:"address,omitempty"`
-	CreatedAt string `json:"created_at,omitempty"`
+	Number    int    `json:"number,omitempty" db:"number"`
+	Client    int    `json:"client,omitempty" db:"client"`
+	Status    string `json:"status,omitempty" db:"status"`
+	Address   string `json:"address,omitempty" db:"address"`
+	CreatedAt string `json:"created_at,omitempty" db:"created_at"`
 }
 
 const (
@@ -17,5 +19,5 @@ const (
 )
 
 var (
-	Db *sql.DB
+	Db *sqlx.DB
 )

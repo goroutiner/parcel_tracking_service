@@ -22,15 +22,36 @@ jobs:
   test:
     needs: build
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: mydb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U root -d mydb"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
-      - name: Startup
+      - name: Wait for PostgreSQL
         run: |
-          go build ./cmd/main.go
-          nohup ./main &
+          for i in {1..10}; do
+            pg_isready -h localhost -U root -d mydb && break
+            echo "Waiting for database..."
+            sleep 3
+          done        
+      - name: Startup
+        run: go run cmd/main.go &
       - name: Test
         run: go test ./internal/services/...
+        env:
+          DATABASE_URL: "postgres://root:password@localhost:5432/mydb?sslmode=disable"
 
   deploy:
     name: Push Docker image to Docker Hub
