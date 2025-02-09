@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parcel Tracking</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Parcel Tracking Service</h1>
+
+      <!-- Register Parcel by Client Number -->
+      <div class="form-group">
+        <h3>Register Parcel</h3>
+        <input
+          id="register-client"
+          type="number"
+          placeholder="Client Number"
+          min="1"
+        />
+        <input id="register-address" type="text" placeholder="Address" />
+        <button onclick="registerParcel()">Register Parcel</button>
+      </div>
+
+      <!-- Change to Next Status -->
+      <div class="form-group">
+        <h3>Change to Next Status</h3>
+        <input
+          id="next-status-parcel-number"
+          type="number"
+          placeholder="Parcel Number"
+        />
+        <button onclick="nextStatus()">Next Status</button>
+      </div>
+
+      <!-- Update Parcel Address -->
+      <div class="form-group">
+        <h3>Update Parcel Address</h3>
+        <input
+          id="update-address-parcel-number"
+          type="number"
+          placeholder="Parcel Number"
+        />
+        <input id="update-address" type="text" placeholder="New Address" />
+        <button onclick="updateAddress()">Update Address</button>
+      </div>
+
+      <!-- Delete Parcel -->
+      <div class="form-group">
+        <h3>Delete Parcel</h3>
+        <input
+          id="delete-parcel-number"
+          type="number"
+          placeholder="Parcel Number"
+        />
+        <button onclick="deleteParcel()">Delete Parcel</button>
+      </div>
+
+      <div class="form-group">
+        <button id="show-parcels-button" onclick="toggleTable()">
+          Show Parcels
+        </button>
+      </div>
+
+      <!-- Package table -->
+      <div
+        class="table-container"
+        id="parcel-table-container"
+        style="display: none"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Номер клиента</th>
+              <th>Номер посылки</th>
+              <th>Адрес доставки</th>
+              <th>Текущий статус</th>
+              <th>Дата регистрации</th>
+            </tr>
+          </thead>
+          <tbody id="parcel-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
