@@ -45,10 +45,7 @@ jobs:
             pg_isready -h localhost -U root -d mydb && break
             echo "Waiting for database..."
             sleep 3
-          done
-      - name: Startup
-        run: |
-            
+          done        
       - name: Startup
         run: go run cmd/main.go &
       - name: Test
