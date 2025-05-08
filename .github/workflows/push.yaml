@@ -39,19 +39,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
+
       - name: Wait for PostgreSQL
         run: |
           for i in {1..10}; do
             pg_isready -h localhost -U root -d mydb && break
             echo "Waiting for database..."
             sleep 3
-          done        
+          done
+
       - name: Startup
         run: go run cmd/main.go &
+
       - name: Test
         run: go test ./internal/services/...
         env:
           DATABASE_URL: "postgres://root:password@localhost:5432/mydb?sslmode=disable"
+
+      - name: Run tests with coverage
+        run: go test -coverprofile=coverage.out ./...
+        
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   deploy:
     name: Push Docker image to Docker Hub
